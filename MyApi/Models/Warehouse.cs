@@ -1,21 +1,18 @@
-
 namespace MyApi.Models;
 
 public class Warehouse
 {
-    public int id { get; set; }
-
-    public string code { get; set; } = "";
-    public string Name { get; set; } = "";
-    public string Address { get; set; } = "";
-    public string City { get; set; } = "";
-    public string ZipCode { get; set; } = "";
-    public string Province { get; set; } = "";
-    public string Country { get; set; } = "";
-    public string ContactName { get; set; } = "";
-    public string ContactPhone { get; set; } = "";
-    public string ContactEmail { get; set; } = "";
-
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public int id { get; set;}
+    public int code { get; set;}
+    public string name { get; set;}
+    public string address {get; set;}
+    public string city {get; set;}
+    public int zip_code {get; set;}
+    public string province {get; set;}
+    public string country {get; set;}
+    public string contact_name { get; set;}
+    public string contact_phone { get; set;}
+    public string contact_email { get; set;}
+    public string created_at { get; set;}
+    public string updated_at { get; set;}
 }
