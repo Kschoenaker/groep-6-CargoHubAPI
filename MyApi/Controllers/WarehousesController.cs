@@ -21,7 +21,7 @@ public class WarehousesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> getWareHouses()
     {
-        var warehouses = await _context.warehouses.ToListAsync();
+        var warehouses = await _context.Warehouses.ToListAsync();
 
         return Ok(warehouses);
     }
