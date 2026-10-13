@@ -8,4 +8,6 @@ public class AppDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Warehouse> warehouses { get; set; }
 }
