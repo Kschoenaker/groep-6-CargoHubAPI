@@ -72,7 +72,7 @@ public class AppDbContext : DbContext
         //     .Property(x => x.Id).HasColumnName("id");
 
         modelBuilder.Entity<ShipmentItems>()
-            .Property(x => x.Id).HasColumnName("id");
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<Shipment>()
         //     .Property(x => x.Id).HasColumnName("id");

@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
+using MyApi.Models;
 
 namespace MyApi.Controllers;
 
 [ApiController]
-[Route("api/v1/shipment-items")]
+[Route("api/v2/shipment-items")]
 public class ShipmentItemsController : ControllerBase
 {
 
@@ -24,6 +25,17 @@ public class ShipmentItemsController : ControllerBase
         var shipment_items = await _context.ShipmentItems.ToListAsync();
 
         return Ok(shipment_items);
+    }
+
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateShipmentItem(ShipmentItems shipmentItem)
+    {
+        _context.ShipmentItems.Add(shipmentItem);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(shipmentItem);
     }
 
 }
