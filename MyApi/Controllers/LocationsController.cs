@@ -28,7 +28,7 @@ public class LocationsController : ControllerBase
     }
 
 
-    [HttpGet("id/{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetLocationById(int id)
     {
         var location = await _context.Locations
@@ -41,17 +41,4 @@ public class LocationsController : ControllerBase
 
         return Ok(location);
     }
-
-
-    [HttpGet("warehouse_id/{warehouseId:int}")]
-    public async Task<IActionResult> GetLocationsByWarehouseId(int warehouseId)
-    {
-        var locations = await _context.Locations
-            .Where(location => location.warehouse_id == warehouseId)
-            .ToListAsync();
-
-        return Ok(locations);
-    }
-    
-
 }

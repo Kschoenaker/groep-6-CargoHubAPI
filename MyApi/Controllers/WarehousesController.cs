@@ -39,4 +39,14 @@ public class WarehousesController : ControllerBase
 
         return Ok(warehouse);
     }
+
+    [HttpGet("{warehouseId:int}/locations")]
+    public async Task<IActionResult> GetLocationsByWarehouseId(int warehouseId)
+    {
+        var locations = await _context.Locations
+            .Where(location => location.warehouse_id == warehouseId)
+            .ToListAsync();
+
+        return Ok(locations);
+    }
 }
