@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
+using MyApi.Models;
 
 namespace MyApi.Controllers;
 
@@ -21,5 +22,15 @@ public class OrderItemsController : ControllerBase
         var orderItems = await _context.OrderItems.ToListAsync();
 
         return Ok(orderItems);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateOrderItem(OrderItem orderItem)
+    {
+        _context.OrderItems.Add(orderItem);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(orderItem);
     }
 }

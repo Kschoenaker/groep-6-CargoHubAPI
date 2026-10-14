@@ -2,9 +2,9 @@ namespace MyApi.Models;
 
 public class OrderItem
 {
-    public int Id { get; set; }
-    public int OrderId { get; set; }
-    public int ItemId { get; set; }
-    public int Amount { get; set; }
-    public decimal UnitPrice { get; set; }
+    public int id { get; set; }
+    public int order_id { get; set; }
+    public int item_id { get; set; }
+    public int amount { get; set; }
+    public decimal unit_price { get; set; }
 }

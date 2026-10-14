@@ -66,7 +66,7 @@ public class AppDbContext : DbContext
         //     .Property(x => x.Id).HasColumnName("id");
 
         modelBuilder.Entity<OrderItem>()
-            .Property(x => x.Id).HasColumnName("id");
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<Order>()
         //     .Property(x => x.Id).HasColumnName("id");
@@ -90,7 +90,7 @@ public class AppDbContext : DbContext
         //     .Property(x => x.Id).HasColumnName("id");
 
         modelBuilder.Entity<Warehouse>()
-            .Property(x => x.Id).HasColumnName("id");
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<Inventory>()
         //     .HasKey(x => new { x.ItemId, x.LocationId });
