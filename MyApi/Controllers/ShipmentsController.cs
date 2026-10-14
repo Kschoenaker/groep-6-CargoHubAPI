@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
+using MyApi.Models;
 
 namespace MyApi.Controllers;
 
@@ -28,6 +29,15 @@ public class ShipmentsController : ControllerBase
         return Ok(shipment);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> CreateShipments(Shipments shipment)
+    {
+        _context.Shipments.Add(shipment);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(shipment);
+    }
 }
 
 //CRUD : Create, Read, Update, Delete

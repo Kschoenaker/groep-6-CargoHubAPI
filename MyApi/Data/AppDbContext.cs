@@ -75,7 +75,7 @@ public class AppDbContext : DbContext
         //     .Property(x => x.Id).HasColumnName("id");
 
         modelBuilder.Entity<Shipments>()
-            .Property(x => x.Id).HasColumnName("id");
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<Supplier>()
         //     .Property(x => x.Id).HasColumnName("id");
