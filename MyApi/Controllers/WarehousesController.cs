@@ -6,7 +6,7 @@ using MyApi.Data;
 namespace MyApi.Controllers;
 
 [ApiController]
-[Route("api/v1/warehouses")]
+[Route("api/v2/warehouses")]
 public class WarehousesController : ControllerBase
 {
 
@@ -26,6 +26,17 @@ public class WarehousesController : ControllerBase
         return Ok(warehouses);
     }
 
-}
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetWarehouseById(int id)
+    {
+        var warehouse = await _context.Warehouses
+            .FirstOrDefaultAsync(warehouse => warehouse.id == id);
 
-//CRUD : Create, Read, Update, Delete
+        if (warehouse is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(warehouse);
+    }
+}
