@@ -19,6 +19,10 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+// Frontend uit wwwroot op http://localhost:3000
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
 
 app.Urls.Add("http://localhost:3000");

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CargoHub</title>
+<style>
+  :root {
+    --bg: #f4f5f7; --panel: #fff; --text: #1f2933; --muted: #6b7785; --border: #e1e4e8;
+    --accent: #2563eb; --accent-soft: #e8efff; --danger: #dc2626; --ok: #16a34a; --warn: #d97706;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+  aside { width: 220px; background: #111827; color: #d1d5db; padding: 20px 12px; flex-shrink: 0; }
+  aside h1 { font-size: 18px; color: #fff; margin: 0 8px 20px; }
+  aside .group { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; margin: 16px 8px 6px; }
+  aside button { display: block; width: 100%; text-align: left; background: none; border: 0; color: inherit; padding: 7px 10px; border-radius: 6px; cursor: pointer; font: inherit; }
+  aside button:hover:not(:disabled) { background: #1f2937; }
+  aside button.active { background: var(--accent); color: #fff; }
+  aside button:disabled { color: #4b5563; cursor: default; }
+
+  main { flex: 1; padding: 24px 32px; min-width: 0; }
+  header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  header h2 { margin: 0; font-size: 22px; }
+  header code { color: var(--muted); }
+
+  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .panel h3 { margin: 0 0 12px; font-size: 15px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; }
+  tr.selected td { background: var(--accent-soft); }
+  td.actions { text-align: right; }
+  .empty { color: var(--muted); padding: 20px 10px; text-align: center; }
+
+  .btn { border: 1px solid var(--border); background: #fff; padding: 5px 10px; border-radius: 6px; cursor: pointer; font: inherit; font-size: 13px; }
+  .btn:hover { border-color: #c4c9d0; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.danger { color: var(--danger); }
+  .btn + .btn { margin-left: 4px; }
+
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin: 10px 0 4px; }
+  input, select { width: 100%; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px; font: inherit; }
+  .form-actions { margin-top: 16px; display: flex; gap: 6px; }
+
+  .badge { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 12px; background: #eef0f3; }
+  .badge.Scheduled { background: #e0ecff; color: #1d4ed8; }
+  .badge.Processed { background: #fef3c7; color: #92400e; }
+  .badge.Completed { background: #dcfce7; color: #166534; }
+  .badge.Cancelled { background: #fee2e2; color: #991b1b; }
+
+  #detail { margin-top: 20px; }
+  #log { margin-top: 20px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  #log div { padding: 3px 0; border-bottom: 1px dashed var(--border); }
+  .s2 { color: var(--ok); } .s4 { color: var(--warn); } .s5 { color: var(--danger); }
+
+  #toast { position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border-radius: 6px; color: #fff; display: none; max-width: 400px; }
+  #toast.ok { background: var(--ok); } #toast.error { background: var(--danger); }
+</style>
+</head>
+<body>
+
+<aside>
+  <h1>CargoHub</h1>
+  <nav id="nav"></nav>
+</aside>
+
+<main>
+  <header>
+    <h2 id="title"></h2>
+    <code id="endpoint"></code>
+  </header>
+
+  <div class="layout">
+    <div>
+      <div class="panel">
+        <table id="table"></table>
+      </div>
+      <div class="panel" id="detail" hidden></div>
+    </div>
+
+    <div>
+      <form class="panel" id="form">
+        <h3 id="form-title"></h3>
+        <div id="fields"></div>
+        <div class="form-actions">
+          <button class="btn primary" type="submit" id="submit"></button>
+          <button class="btn" type="button" id="cancel" hidden>Annuleren</button>
+        </div>
+      </form>
+
+      <div class="panel" id="log">
+        <h3 style="font-family: system-ui">Requests</h3>
+        <div id="log-lines"><span style="color: var(--muted)">Nog geen requests</span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const API = '/api/v2';
+const STATUSES = ['Scheduled', 'Processed', 'Completed', 'Cancelled'];
+const STATUS_TEXT = { 200: 'OK', 201: 'Created', 204: 'No Content', 400: 'Bad Request', 404: 'Not Found', 409: 'Conflict', 500: 'Server Error' };
+
+// Lookups voor dropdowns en om id's leesbaar te tonen
+const lookup = { warehouses: [], locations: [] };
+const warehouseName = id => lookup.warehouses.find(w => w.id === id)?.name ?? `#${id}`;
+const locationName = id => {
+  const l = lookup.locations.find(l => l.id === id);
+  return l ? `${l.code} (${warehouseName(l.warehouse_id)})` : `#${id}`;
+};
+const warehouseOptions = () => lookup.warehouses.map(w => [w.id, `${w.code} - ${w.name}`]);
+const locationOptions = () => lookup.locations.map(l => [l.id, locationName(l.id)]);
+
+const resources = {
+  warehouses: {
+    label: 'Warehouses', singular: 'warehouse', path: '/warehouses',
+    columns: [['id', 'ID'], ['code', 'Code'], ['name', 'Naam'], ['city', 'Stad'], ['country', 'Land']],
+    fields: [
+      { name: 'code', label: 'Code', required: true },
+      { name: 'name', label: 'Naam', required: true },
+      { name: 'address', label: 'Adres' },
+      { name: 'zip_code', label: 'Postcode' },
+      { name: 'city', label: 'Stad' },
+      { name: 'province', label: 'Provincie' },
+      { name: 'country', label: 'Land', required: true },
+      { name: 'contact_name', label: 'Contactpersoon' },
+      { name: 'contact_phone', label: 'Telefoon' },
+      { name: 'contact_email', label: 'E-mail', type: 'email' },
+    ],
+    detail: { label: 'Locaties', show: showWarehouseLocations },
+  },
+  locations: {
+    label: 'Locations', singular: 'location', path: '/locations',
+    columns: [['id', 'ID'], ['code', 'Code'], ['name', 'Naam'], ['warehouse_id', 'Warehouse', warehouseName]],
+    fields: [
+      { name: 'warehouse_id', label: 'Warehouse', type: 'select', options: warehouseOptions, number: true, required: true },
+      { name: 'code', label: 'Code', required: true },
+      { name: 'name', label: 'Naam', required: true },
+    ],
+  },
+  transfers: {
+    label: 'Transfers', singular: 'transfer', path: '/transfers',
+    columns: [
+      ['id', 'ID'], ['reference', 'Referentie'],
+      ['from_location_id', 'Van', locationName], ['to_location_id', 'Naar', locationName],
+      ['transfer_status', 'Status', s => `<span class="badge ${esc(s)}">${esc(s)}</span>`, true],
+      ['created_at', 'Aangemaakt', formatDate],
+    ],
+    fields: [
+      { name: 'reference', label: 'Referentie', required: true },
+      { name: 'from_location_id', label: 'Van locatie', type: 'select', options: locationOptions, number: true, required: true },
+      { name: 'to_location_id', label: 'Naar locatie', type: 'select', options: locationOptions, number: true, required: true },
+      { name: 'transfer_status', label: 'Status', type: 'select', options: () => STATUSES.map(s => [s, s]), required: true },
+    ],
+    detail: { label: 'Items', show: showTransferItems },
+  },
+};
+
+// Controllers die nog geen endpoints hebben
+const notBuilt = ['Clients', 'Inventories', 'Items', 'Item groups', 'Item lines', 'Item types', 'Orders', 'Shipments', 'Suppliers'];
+
+let current = 'warehouses';
+let rows = [];
+let editingId = null;
+let selectedId = null;
+
+function esc(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+function formatDate(value) {
+  return value ? new Date(value).toLocaleString('nl-NL', { dateStyle: 'short', timeStyle: 'short' }) : '';
+}
+
+async function api(method, path, body) {
+  const res = await fetch(API + path, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  const text = await res.text();
+  let data = text;
+  try { data = text ? JSON.parse(text) : null; } catch { }
+
+  logRequest(method, API + path, res.status);
+
+  if (!res.ok) {
+    throw new Error(errorMessage(res.status, data));
+  }
+  return data;
+}
+
+function errorMessage(status, data) {
+  if (typeof data === 'string' && data) return `${status}: ${data}`;
+  if (data?.errors) return `${status}: ${Object.values(data.errors).flat().join(', ')}`;
+  return `${status} ${STATUS_TEXT[status] ?? ''}`;
+}
+
+function logRequest(method, url, status) {
+  const lines = document.getElementById('log-lines');
+  if (lines.querySelector('span')) lines.innerHTML = '';
+  const line = document.createElement('div');
+  line.innerHTML = `<b>${method}</b> ${esc(url)} → <span class="s${String(status)[0]}">${status} ${STATUS_TEXT[status] ?? ''}</span>`;
+  lines.prepend(line);
+  while (lines.children.length > 10) lines.lastChild.remove();
+}
+
+function toast(message, type = 'ok') {
+  const el = document.getElementById('toast');
+  el.textContent = message;
+  el.className = type;
+  el.style.display = 'block';
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => el.style.display = 'none', 3500);
+}
+
+function renderNav() {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = '<div class="group">Werkt</div>'
+    + Object.entries(resources).map(([key, r]) =>
+      `<button data-key="${key}" class="${key === current ? 'active' : ''}">${r.label}</button>`).join('')
+    + '<div class="group">Nog geen endpoints</div>'
+    + notBuilt.map(name => `<button disabled>${name}</button>`).join('');
+
+  nav.querySelectorAll('button[data-key]').forEach(btn =>
+    btn.onclick = () => { current = btn.dataset.key; editingId = null; selectedId = null; load(); });
+}
+
+async function loadLookups() {
+  [lookup.warehouses, lookup.locations] = await Promise.all([api('GET', '/warehouses'), api('GET', '/locations')]);
+}
+
+async function load() {
+  const r = resources[current];
+  renderNav();
+  document.getElementById('title').textContent = r.label;
+  document.getElementById('endpoint').textContent = API + r.path;
+  document.getElementById('detail').hidden = true;
+
+  try {
+    await loadLookups();
+    rows = current === 'warehouses' ? lookup.warehouses
+      : current === 'locations' ? lookup.locations
+      : await api('GET', r.path);
+  } catch (e) {
+    rows = [];
+    toast(e.message, 'error');
+  }
+
+  renderTable();
+  renderForm();
+  if (selectedId !== null && r.detail) {
+    const row = rows.find(x => x.id === selectedId);
+    if (row) r.detail.show(row);
+  }
+}
+
+function renderTable() {
+  const r = resources[current];
+  const table = document.getElementById('table');
+
+  const head = `<tr>${r.columns.map(c => `<th>${c[1]}</th>`).join('')}<th></th></tr>`;
+  if (rows.length === 0) {
+    table.innerHTML = head + `<tr><td class="empty" colspan="${r.columns.length + 1}">Nog geen ${r.label.toLowerCase()}. Voeg er een toe via het formulier.</td></tr>`;
+    return;
+  }
+
+  const body = rows.map(row => {
+    const cells = r.columns.map(([key, , format, isHtml]) => {
+      const value = format ? format(row[key]) : row[key];
+      return `<td>${isHtml ? value : esc(value)}</td>`;
+    }).join('');
+
+    const detailBtn = r.detail ? `<button class="btn" data-action="detail" data-id="${row.id}">${r.detail.label}</button>` : '';
+    return `<tr class="${row.id === selectedId ? 'selected' : ''}">${cells}<td class="actions">
+      ${detailBtn}
+      <button class="btn" data-action="edit" data-id="${row.id}">Bewerken</button>
+      <button class="btn danger" data-action="delete" data-id="${row.id}">Verwijderen</button>
+    </td></tr>`;
+  }).join('');
+
+  table.innerHTML = head + body;
+  table.querySelectorAll('button[data-action]').forEach(btn => {
+    const row = rows.find(x => x.id === Number(btn.dataset.id));
+    btn.onclick = () => ({ detail: showDetail, edit: startEdit, delete: remove })[btn.dataset.action](row);
+  });
+}
+
+function renderForm(values = {}) {
+  const r = resources[current];
+  const editing = editingId !== null;
+
+  document.getElementById('form-title').textContent = editing
+    ? `${r.singular} #${editingId} bewerken (PUT)`
+    : `Nieuwe ${r.singular} (POST)`;
+  document.getElementById('submit').textContent = editing ? 'Opslaan' : 'Toevoegen';
+  document.getElementById('cancel').hidden = !editing;
+
+  document.getElementById('fields').innerHTML = r.fields.map(f => {
+    const value = values[f.name] ?? '';
+    const req = f.required ? 'required' : '';
+    const input = f.type === 'select'
+      ? `<select name="${f.name}" ${req}><option value="">Kies...</option>${f.options().map(([v, text]) =>
+          `<option value="${esc(v)}" ${String(v) === String(value) ? 'selected' : ''}>${esc(text)}</option>`).join('')}</select>`
+      : `<input name="${f.name}" type="${f.type ?? 'text'}" value="${esc(value)}" ${req}>`;
+    return `<label>${f.label}${f.required ? ' *' : ''}</label>${input}`;
+  }).join('');
+}
+
+function startEdit(row) {
+  editingId = row.id;
+  renderForm(row);
+}
+
+function cancelEdit() {
+  editingId = null;
+  renderForm();
+}
+
+async function submitForm(event) {
+  event.preventDefault();
+  const r = resources[current];
+  const data = new FormData(event.target);
+
+  const body = {};
+  for (const f of r.fields) {
+    const value = data.get(f.name).trim();
+    body[f.name] = f.number ? Number(value) : (value === '' ? null : value);
+  }
+
+  try {
+    if (editingId !== null) {
+      await api('PUT', `${r.path}/${editingId}`, body);
+      toast(`${r.singular} #${editingId} opgeslagen`);
+    } else {
+      const created = await api('POST', r.path, body);
+      toast(`${r.singular} #${created.id} toegevoegd`);
+    }
+    editingId = null;
+    await load();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function remove(row) {
+  const r = resources[current];
+  if (!confirm(`${r.singular} #${row.id} verwijderen?`)) return;
+
+  try {
+    await api('DELETE', `${r.path}/${row.id}`);
+    toast(`${r.singular} #${row.id} verwijderd`);
+    if (selectedId === row.id) selectedId = null;
+    if (editingId === row.id) editingId = null;
+    await load();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+function showDetail(row) {
+  selectedId = row.id;
+  renderTable();
+  resources[current].detail.show(row);
+}
+
+async function showWarehouseLocations(warehouse) {
+  const locations = await api('GET', `/warehouses/${warehouse.id}/locations`);
+  renderDetail(`Locaties in ${warehouse.name}`, `GET ${API}/warehouses/${warehouse.id}/locations`,
+    [['ID', 'id'], ['Code', 'code'], ['Naam', 'name']], locations);
+}
+
+async function showTransferItems(transfer) {
+  const items = await api('GET', `/transfers/${transfer.id}/items`);
+  renderDetail(`Items in transfer ${transfer.reference}`, `GET ${API}/transfers/${transfer.id}/items`,
+    [['Item ID', 'item_id'], ['Aantal', 'amount']], items);
+}
+
+function renderDetail(title, endpoint, columns, data) {
+  const el = document.getElementById('detail');
+  el.hidden = false;
+  el.innerHTML = `<h3>${esc(title)} <code style="font-weight:normal;color:var(--muted)">${esc(endpoint)}</code></h3>
+    <table><tr>${columns.map(c => `<th>${c[0]}</th>`).join('')}</tr>
+    ${data.length === 0
+      ? `<tr><td class="empty" colspan="${columns.length}">Leeg</td></tr>`
+      : data.map(d => `<tr>${columns.map(c => `<td>${esc(d[c[1]])}</td>`).join('')}</tr>`).join('')}
+    </table>`;
+}
+
+document.getElementById('form').onsubmit = submitForm;
+document.getElementById('cancel').onclick = cancelEdit;
+load();
+</script>
+</body>
+</html>
