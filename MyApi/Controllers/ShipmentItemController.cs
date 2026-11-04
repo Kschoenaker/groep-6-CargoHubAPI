@@ -27,7 +27,19 @@ public class ShipmentItemsController : ControllerBase
         return Ok(shipment_items);
     }
 
-    
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetShipmentItem(int id)
+    {
+        var shipmentItem = await _context.ShipmentItems.FindAsync(id);
+
+        if (shipmentItem == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(shipmentItem);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateShipmentItem(ShipmentItems shipmentItem)
     {
