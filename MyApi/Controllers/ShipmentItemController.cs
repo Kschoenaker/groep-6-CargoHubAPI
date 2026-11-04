@@ -38,6 +38,44 @@ public class ShipmentItemsController : ControllerBase
         return Ok(shipmentItem);
     }
 
+        // werkt de gegevens van een bestaande shipment item bij, afhankelijk van het id
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateShipmentItem(int id, ShipmentItems shipmentItem)
+    {
+        // Zoek de bestaande shipment item op met het ID uit de URL
+        var existingShipmentItem = await _context.ShipmentItems.FindAsync(id);
+
+        if (existingShipmentItem == null)
+        {
+            return NotFound();
+        }
+        // Neem de nieuwe waarden uit de request over
+        existingShipmentItem.shipment_id = shipmentItem.shipment_id;
+        existingShipmentItem.item_id = shipmentItem.item_id;
+        existingShipmentItem.amount = shipmentItem.amount;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(existingShipmentItem);
+    }
+
+    //verwijdert de shipment item met dit ID 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteShipmentItems(int id)
+    {
+        var existingShipmentItem = await _context.ShipmentItems.FindAsync(id);
+
+        if (existingShipmentItem == null)
+        {
+            return NotFound();
+        }
+
+        _context.ShipmentItems.Remove(existingShipmentItem);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
 }
 
 //CRUD : Create, Read, Update, Delete
