@@ -21,7 +21,7 @@ public class AppDbContext : DbContext
     public DbSet<OrderItem> OrderItems { get; set; }
     // public DbSet<Order> Orders { get; set; }
     public DbSet<ShipmentItems> ShipmentItems { get; set; }
-    // public DbSet<Shipment> Shipments { get; set; }
+    public DbSet<Shipments> Shipments { get; set; }
     // public DbSet<Supplier> Suppliers { get; set; }
     // public DbSet<TransferItem> TransferItems { get; set; }
     // public DbSet<Transfer> Transfers { get; set; }
@@ -40,7 +40,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<OrderItem>().ToTable("order_items");
         // modelBuilder.Entity<Order>().ToTable("orders");
         modelBuilder.Entity<ShipmentItems>().ToTable("shipment_items");
-        // modelBuilder.Entity<Shipment>().ToTable("shipments");
+        modelBuilder.Entity<Shipments>().ToTable("shipments");
         // modelBuilder.Entity<Supplier>().ToTable("suppliers");
         // modelBuilder.Entity<TransferItem>().ToTable("transfer_items");
         // modelBuilder.Entity<Transfer>().ToTable("tranfers");
@@ -74,8 +74,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<ShipmentItems>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<Shipment>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Shipments>()
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<Supplier>()
         //     .Property(x => x.Id).HasColumnName("id");
