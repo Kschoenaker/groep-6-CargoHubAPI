@@ -33,4 +33,43 @@ public class OrderItemsController : ControllerBase
 
         return Ok(orderItem);
     }
+
+    // werkt de gegevens van een bestaande order item bij, afhankelijk van het id
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateOrderItem(int id, OrderItem orderItem)
+    {
+        // Zoek de bestaande order item op met het ID uit de URL
+        var existingOrderItem = await _context.OrderItems.FindAsync(id);
+
+        if (existingOrderItem == null)
+        {
+            return NotFound();
+        }
+        // Neem de nieuwe waarden uit de request over
+        existingOrderItem.order_id = orderItem.order_id;
+        existingOrderItem.item_id = orderItem.item_id;
+        existingOrderItem.amount = orderItem.amount;
+        existingOrderItem.unit_price = orderItem.unit_price;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(existingOrderItem);
+    }
+
+    //verwijdert de order item met dit ID 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrderItems(int id)
+    {
+        var existingOrderItem = await _context.OrderItems.FindAsync(id);
+
+        if (existingOrderItem == null)
+        {
+            return NotFound();
+        }
+
+        _context.OrderItems.Remove(existingOrderItem);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
