@@ -11,18 +11,18 @@ public class AppDbContext : DbContext
     {
     }
 
-    // public DbSet<Client> Clients { get; set; }
-    // public DbSet<Inventory> Inventories { get; set; }
+    public DbSet<Client> Clients { get; set; }
+    public DbSet<Inventory> Inventories { get; set; }
     // public DbSet<ItemGroup> ItemGroups { get; set; }
     // public DbSet<ItemLine> ItemLines { get; set; }
     // public DbSet<ItemType> ItemTypes { get; set; }
     // public DbSet<Item> Items { get; set; }
     // public DbSet<Location> Locations { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
-    // public DbSet<Order> Orders { get; set; }
+    public DbSet<Order> Orders { get; set; }
     public DbSet<ShipmentItems> ShipmentItems { get; set; }
     public DbSet<Shipments> Shipments { get; set; }
-    // public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Supplier> Suppliers { get; set; }
     // public DbSet<TransferItem> TransferItems { get; set; }
     // public DbSet<Transfer> Transfers { get; set; }
     // public DbSet<User> Users { get; set; }
@@ -30,25 +30,25 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.Entity<Client>().ToTable("clients");
-        // modelBuilder.Entity<Inventory>().ToTable("inventories");
+        modelBuilder.Entity<Client>().ToTable("clients");
+        modelBuilder.Entity<Inventory>().ToTable("inventories");
         // modelBuilder.Entity<ItemGroup>().ToTable("item_groups");
         // modelBuilder.Entity<ItemLine>().ToTable("item_lines");
         // modelBuilder.Entity<ItemType>().ToTable("item_types");
         // modelBuilder.Entity<Item>().ToTable("items");
         // modelBuilder.Entity<Location>().ToTable("locations");
         modelBuilder.Entity<OrderItem>().ToTable("order_items");
-        // modelBuilder.Entity<Order>().ToTable("orders");
+        modelBuilder.Entity<Order>().ToTable("orders");
         modelBuilder.Entity<ShipmentItems>().ToTable("shipment_items");
         modelBuilder.Entity<Shipments>().ToTable("shipments");
-        // modelBuilder.Entity<Supplier>().ToTable("suppliers");
+        modelBuilder.Entity<Supplier>().ToTable("suppliers");
         // modelBuilder.Entity<TransferItem>().ToTable("transfer_items");
         // modelBuilder.Entity<Transfer>().ToTable("tranfers");
         // modelBuilder.Entity<User>().ToTable("users");
         modelBuilder.Entity<Warehouse>().ToTable("warehouses");
 
-        // modelBuilder.Entity<Client>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Client>()
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<ItemGroup>()
         //     .Property(x => x.Id).HasColumnName("id");
@@ -68,8 +68,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<OrderItem>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<Order>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Order>()
+            .Property(x => x.id).HasColumnName("id");
 
         modelBuilder.Entity<ShipmentItems>()
             .Property(x => x.id).HasColumnName("id");
@@ -77,8 +77,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Shipments>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<Supplier>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Supplier>()
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<TransferItem>()
         //     .Property(x => x.Id).HasColumnName("id");
