@@ -1,6 +1,6 @@
 namespace MyApi.Models;
 
-public class Warehouse
+public class Warehouses
 {
     public int Id { get; set;}
     public string Name { get; set;}
