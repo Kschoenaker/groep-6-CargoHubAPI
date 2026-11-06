@@ -1,4 +1,4 @@
-
+using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +16,11 @@ if (args.Length == 1 && args[0].Equals("--import-json-brondata", StringCompariso
 
 builder.Services.AddControllers();
 
+// Database: PostgreSQL
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,3 +35,6 @@ app.MapControllers();
 app.Urls.Add("http://localhost:3000");
 
 app.Run();
+
+// Nodig zodat de integratietests de API kunnen opstarten
+public partial class Program { }

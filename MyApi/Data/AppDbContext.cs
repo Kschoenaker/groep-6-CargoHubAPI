@@ -22,14 +22,14 @@ public class AppDbContext : DbContext
     // public DbSet<ItemLine> ItemLines { get; set; }
     // public DbSet<ItemType> ItemTypes { get; set; }
     // public DbSet<Item> Items { get; set; }
-    // public DbSet<Location> Locations { get; set; }
+    public DbSet<Location> Locations { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<ShipmentItems> ShipmentItems { get; set; }
     public DbSet<Shipments> Shipments { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
-    // public DbSet<TransferItem> TransferItems { get; set; }
-    // public DbSet<Transfer> Transfers { get; set; }
+    public DbSet<TransferItem> TransferItems { get; set; }
+    public DbSet<Transfer> Transfers { get; set; }
     // public DbSet<User> Users { get; set; }
     public DbSet<Warehouse> Warehouses { get; set; }
 
@@ -41,14 +41,14 @@ public class AppDbContext : DbContext
         // modelBuilder.Entity<ItemLine>().ToTable("item_lines");
         // modelBuilder.Entity<ItemType>().ToTable("item_types");
         // modelBuilder.Entity<Item>().ToTable("items");
-        // modelBuilder.Entity<Location>().ToTable("locations");
+        modelBuilder.Entity<Location>().ToTable("locations");
         modelBuilder.Entity<OrderItem>().ToTable("order_items");
         modelBuilder.Entity<Order>().ToTable("orders");
         modelBuilder.Entity<ShipmentItems>().ToTable("shipment_items");
         modelBuilder.Entity<Shipments>().ToTable("shipments");
         modelBuilder.Entity<Supplier>().ToTable("suppliers");
-        // modelBuilder.Entity<TransferItem>().ToTable("transfer_items");
-        // modelBuilder.Entity<Transfer>().ToTable("tranfers");
+        modelBuilder.Entity<TransferItem>().ToTable("transfer_items");
+        modelBuilder.Entity<Transfer>().ToTable("transfers");
         // modelBuilder.Entity<User>().ToTable("users");
         modelBuilder.Entity<Warehouse>().ToTable("warehouses");
 
@@ -67,8 +67,8 @@ public class AppDbContext : DbContext
         // modelBuilder.Entity<Item>()
         //     .Property(x => x.Id).HasColumnName("id");
 
-        // modelBuilder.Entity<Location>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Location>()
+            .Property(x => x.id).HasColumnName("id");
 
         modelBuilder.Entity<OrderItem>()
             .Property(x => x.id).HasColumnName("id");
@@ -85,11 +85,11 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Supplier>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<TransferItem>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<TransferItem>()
+            .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<Transfer>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Transfer>()
+            .Property(x => x.id).HasColumnName("id");
 
         // modelBuilder.Entity<User>()
         //     .Property(x => x.Id).HasColumnName("id");
@@ -97,14 +97,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Warehouse>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<Inventory>()
-        //     .HasKey(x => new { x.ItemId, x.LocationId });
-
-        // modelBuilder.Entity<Inventory>()
-        //     .Property(x => x.ItemId).HasColumnName("item_id");
-
-        // modelBuilder.Entity<Inventory>()
-        //     .Property(x => x.LocationId).HasColumnName("location_id");
+        modelBuilder.Entity<Inventory>()
+            .HasKey(x => new { x.item_id, x.location_id });
 
         base.OnModelCreating(modelBuilder);
     }

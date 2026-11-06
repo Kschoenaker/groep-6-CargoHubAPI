@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using MyApi.Controllers;
 using MyApi.Data;
 using MyApi.Models;
-using Xunit; //doe dit erbij 
+using Xunit;
 
 namespace MyApi.Tests;
 
 public class InventoriesControllerTests
 {
-    private static AppDbContext CreateContext() //temporary database
+    private static AppDbContext CreateContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -18,7 +18,7 @@ public class InventoriesControllerTests
         return new AppDbContext(options);
     }
 
-    private static Inventory CreateInventory() //mock data
+    private static Inventory CreateInventory()
     {
         return new Inventory
         {
@@ -34,7 +34,7 @@ public class InventoriesControllerTests
     }
 
     [Fact]
-    public async Task GetInventories_ReturnsAllInventories() //unit test
+    public async Task GetInventories_ReturnsAllInventories()
     {
         using var context = CreateContext();
         context.Inventories.Add(CreateInventory());
