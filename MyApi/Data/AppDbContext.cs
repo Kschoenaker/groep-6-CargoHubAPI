@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using MyApi.Models;
 
@@ -10,6 +9,12 @@ public class AppDbContext : DbContext
         : base(options)
     {
     }
+
+
+    public DbSet<Item> item { get; set; }
+    public DbSet<ItemType> itemTypes { get; set; }
+    public DbSet<ItemGroup> itemGroups { get; set; }
+    public DbSet<ItemLine> itemLines  { get; set; }
 
     public DbSet<Client> Clients { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
