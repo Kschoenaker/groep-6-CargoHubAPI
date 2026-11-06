@@ -129,7 +129,6 @@ public class TransfersController : ControllerBase
             return NotFound();
         }
 
-        // transfer_items verwijzen naar de transfer, dus die eerst verwijderen
         var items = await _context.TransferItems
             .Where(item => item.transfer_id == transferId)
             .ToListAsync();
