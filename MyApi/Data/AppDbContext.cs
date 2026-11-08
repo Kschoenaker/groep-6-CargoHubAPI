@@ -92,14 +92,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Warehouse>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<Inventory>()
-        //     .HasKey(x => new { x.ItemId, x.LocationId });
-
-        // modelBuilder.Entity<Inventory>()
-        //     .Property(x => x.ItemId).HasColumnName("item_id");
-
-        // modelBuilder.Entity<Inventory>()
-        //     .Property(x => x.LocationId).HasColumnName("location_id");
+        modelBuilder.Entity<Inventory>()
+            .HasKey(x => new { x.item_id, x.location_id });
 
         base.OnModelCreating(modelBuilder);
     }

@@ -22,7 +22,7 @@ public class ShipmentsController : ControllerBase
 
     
     [HttpGet]
-    public async Task<IActionResult> getShipments()
+    public async Task<IActionResult> GetShipments()
     {
         var shipment = await _context.Shipments.ToListAsync();
 

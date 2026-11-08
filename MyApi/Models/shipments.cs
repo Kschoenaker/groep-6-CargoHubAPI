@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MyApi.Models;
 
 public class Shipments
@@ -7,6 +9,7 @@ public class Shipments
     public int order_id { get; set; }
     public DateTime shipment_date { get; set; }
     public string shipment_type { get; set; }
+    [Required] // shipment_type mag niet leeg zijn
     public string shipment_status { get; set; }
     public string carrier_name { get; set; }
     public string shipping_method { get; set; }
