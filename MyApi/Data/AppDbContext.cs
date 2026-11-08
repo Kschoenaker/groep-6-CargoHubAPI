@@ -98,7 +98,17 @@ public class AppDbContext : DbContext
             .Property(x => x.id).HasColumnName("id");
 
         modelBuilder.Entity<Inventory>()
+<<<<<<< Updated upstream
             .HasKey(x => new { x.item_id, x.location_id });
+=======
+             .HasKey(x => new { x.item_id, x.location_id });
+
+        modelBuilder.Entity<Inventory>()
+             .Property(x => x.item_id).HasColumnName("item_id");
+
+        modelBuilder.Entity<Inventory>()
+             .Property(x => x.location_id).HasColumnName("location_id");
+>>>>>>> Stashed changes
 
         base.OnModelCreating(modelBuilder);
     }
