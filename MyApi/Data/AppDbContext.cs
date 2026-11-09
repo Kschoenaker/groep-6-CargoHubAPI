@@ -19,10 +19,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Client> Clients { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
-    // public DbSet<ItemGroup> ItemGroups { get; set; }
-    // public DbSet<ItemLine> ItemLines { get; set; }
-    // public DbSet<ItemType> ItemTypes { get; set; }
-    // public DbSet<Item> Items { get; set; }
+    public DbSet<ItemGroup> ItemGroups { get; set; }
+    public DbSet<ItemLine> ItemLines { get; set; }
+    public DbSet<ItemType> ItemTypes { get; set; }
+    public DbSet<Item> Items { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Order> Orders { get; set; }
@@ -89,8 +89,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Inventory>().ToTable("inventories");
         modelBuilder.Entity<Inventory>()
             .HasKey(x => new { x.item_id, x.location_id });
-        // modelBuilder.Entity<ItemType>().ToTable("item_types");
-        // modelBuilder.Entity<Item>().ToTable("items");
+        modelBuilder.Entity<ItemType>().ToTable("item_types");
+        modelBuilder.Entity<Item>().ToTable("items");
         modelBuilder.Entity<Location>().ToTable("locations");
         modelBuilder.Entity<OrderItem>().ToTable("order_items");
         modelBuilder.Entity<Order>().ToTable("orders");
@@ -105,17 +105,17 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Client>()
             .Property(x => x.id).HasColumnName("id");
 
-        // modelBuilder.Entity<ItemGroup>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<ItemGroup>()
+            .Property(x => x.Id).HasColumnName("id");
 
-        // modelBuilder.Entity<ItemLine>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<ItemLine>()
+            .Property(x => x.Id).HasColumnName("id");
 
-        // modelBuilder.Entity<ItemType>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<ItemType>()
+            .Property(x => x.Id).HasColumnName("id");
 
-        // modelBuilder.Entity<Item>()
-        //     .Property(x => x.Id).HasColumnName("id");
+        modelBuilder.Entity<Item>()
+            .Property(x => x.Id).HasColumnName("id");
 
         modelBuilder.Entity<Location>()
             .Property(x => x.id).HasColumnName("id");
