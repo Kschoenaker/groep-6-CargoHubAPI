@@ -69,4 +69,67 @@ public class OrdersControllerTests
 
         Assert.IsType<OkObjectResult>(result);
     }
+
+
+
+[Fact] // test if a new order can be created
+public async Task CreateOrder_Test()
+{
+    using var context = CreateContext();
+
+    var order = CreateOrder();
+
+    var controller = new OrdersController(context);
+
+    var result = await controller.CreateOrder(order);
+
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var createdOrder = Assert.IsType<Order>(okResult.Value);
+
+    Assert.Equal(1, createdOrder.id);
+    Assert.Equal("ORD-001", createdOrder.reference);
+
+    Assert.Single(context.Orders);
+}
+
+
+[Fact] // test if an order can be updated
+public async Task UpdateOrder_ReturnsOk()
+{
+    using var context = CreateContext();
+
+    context.Orders.Add(CreateOrder());
+    await context.SaveChangesAsync();
+
+    var order = CreateOrder();
+    order.order_status = "Shipped";
+
+    var controller = new OrdersController(context);
+
+    var result = await controller.UpdateOrder(1, order);
+
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var updatedOrder = Assert.IsType<Order>(okResult.Value);
+
+    Assert.Equal("Shipped", updatedOrder.order_status);
+}
+
+
+[Fact] // test if an order can be deleted
+public async Task DeleteOrder_ReturnsOk()
+{
+    using var context = CreateContext();
+
+    context.Orders.Add(CreateOrder());
+    await context.SaveChangesAsync();
+
+    var controller = new OrdersController(context);
+
+    var result = await controller.DeleteOrder(1);
+
+    Assert.IsType<OkResult>(result);
+
+    Assert.Empty(context.Orders);
+}
+
 }
