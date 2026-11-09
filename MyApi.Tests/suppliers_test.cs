@@ -64,4 +64,63 @@ public class SuppliersControllerTests
 
         Assert.IsType<OkObjectResult>(result);
     }
+
+
+
+[Fact]
+public async Task CreateSupplier_Test()
+{
+    using var context = CreateContext();
+
+    var supplier = CreateSupplier();
+    var controller = new SuppliersController(context);
+
+    var result = await controller.CreateSupplier(supplier);
+
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var createdSupplier = Assert.IsType<Supplier>(okResult.Value);
+
+    Assert.Equal(1, createdSupplier.id);
+    Assert.Equal("SUP-001", createdSupplier.reference);
+    Assert.Single(context.Suppliers);
+}
+
+
+[Fact]
+public async Task UpdateSupplier_ReturnsOk()
+{
+    using var context = CreateContext();
+
+    context.Suppliers.Add(CreateSupplier());
+    await context.SaveChangesAsync();
+
+    var supplier = CreateSupplier();
+    supplier.province = "Antwerp";
+
+    var controller = new SuppliersController(context);
+
+    var result = await controller.UpdateSupplier(1, supplier);
+
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var updatedSupplier = Assert.IsType<Supplier>(okResult.Value);
+
+    Assert.Equal("Antwerp", updatedSupplier.province);
+}
+
+
+[Fact]
+public async Task DeleteSupplier_ReturnsOk()
+{
+    using var context = CreateContext();
+
+    context.Suppliers.Add(CreateSupplier());
+    await context.SaveChangesAsync();
+
+    var controller = new SuppliersController(context);
+
+    var result = await controller.DeleteSupplier(1);
+
+    Assert.IsType<OkResult>(result);
+    Assert.Empty(context.Suppliers);
+}
 }

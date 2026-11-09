@@ -62,4 +62,70 @@ public async Task GetInventories_ReturnsOk()
     Assert.IsType<OkObjectResult>(result);
 }
 
+
+    // integration test
+    [Fact] // test if a new inventory can be created
+    public async Task CreateInventory_Test()
+    {
+        using var context = CreateContext();
+
+        var inventory = CreateInventory();
+
+        var controller = new InventoriesController(context);
+
+        var result = await controller.CreateInventory(inventory);
+
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var createdInventory = Assert.IsType<Inventory>(okResult.Value);
+
+        Assert.Equal(1, createdInventory.item_id);
+        Assert.Equal(1, createdInventory.location_id);
+
+        Assert.Single(context.Inventories);
+    }
+
+
+
+[Fact] // test if an inventory can be updated
+public async Task UpdateInventory_ReturnsOk()
+{
+    using var context = CreateContext();
+
+    context.Inventories.Add(CreateInventory());
+    await context.SaveChangesAsync();
+
+    var inventory = CreateInventory();
+    inventory.quantity_on_hand = 20;
+
+    var controller = new InventoriesController(context);
+
+    var result = await controller.UpdateInventory(1, 1, inventory);
+
+    var okResult = Assert.IsType<OkObjectResult>(result);
+    var updatedInventory = Assert.IsType<Inventory>(okResult.Value);
+
+    Assert.Equal(20, updatedInventory.quantity_on_hand);
+}
+
+
+// integration test
+[Fact] // test if an inventory can be deleted
+public async Task DeleteInventory_ReturnsOk()
+{
+    using var context = CreateContext();
+
+    var inventory = CreateInventory();
+
+    context.Inventories.Add(inventory);
+    await context.SaveChangesAsync();
+
+    var controller = new InventoriesController(context);
+
+    var result = await controller.DeleteInventory(1, 1);
+
+    Assert.IsType<OkResult>(result);
+
+    Assert.Empty(context.Inventories);
+}
+
 }
