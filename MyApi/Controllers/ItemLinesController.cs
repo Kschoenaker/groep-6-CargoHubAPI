@@ -7,6 +7,18 @@ using MyApi.Models;
 
 namespace MyApi.Controllers
 {
+    // All endpoints for the Item entity
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 1. GET - ALLE ARTIKELGROEPEN OPHALEN
+// 2. GET - ARTIKELGROEP OPHALEN OP ID
+// 3. GET - ALLE ITEMS VAN EEN ARTIKELGROEP OPHALEN -  api/v1/item_groups/{id}/items
+// 4. POST - NIEUWE ARTIKELGROEP AANMAKEN
+// 5. PUT - BESTAANDE ARTIKELGROEP AANPASS
+// 6. DELETE - ARTIKELGROEP VERWIJDEREN
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
     [ApiController]
     public class ItemLinesController : ControllerBase
     {
@@ -120,6 +132,28 @@ namespace MyApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("api/v2/itemlines/{id}/items")]
+        public async Task<IActionResult> GetItemsByItemLineId(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var itemLine = await _context.itemLines.FindAsync(id);
+            if (itemLine == null)
+            {
+                return NotFound();
+            }
+
+            var items = await _context.item
+                .Where(i => i.Item_Line_Id == id)
+                .ToListAsync();
+
+            return Ok(items);
         }
     }
 }

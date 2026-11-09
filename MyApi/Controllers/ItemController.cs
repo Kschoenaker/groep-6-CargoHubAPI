@@ -6,6 +6,18 @@ using MyApi.Models;
 
 namespace MyApi.Controllers;
 
+// All endpoints for the Item entity
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 1. GET - ALLE ITEMS OPHALEN
+// 2. GET - ITEM OPHALEN OP ID
+// 3. POST - NIEUW ITEM AANMAKEN
+// 4. PUT - BESTAAND ITEM AANPASSEN
+// 5. DELETE - ITEM VERWIJDEREN
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 [ApiController]
 public class ItemController : ControllerBase
 {
@@ -101,7 +113,20 @@ public class ItemController : ControllerBase
         // Update de eigenschappen van het bestaande item
         existingItem.Code = updatedItem.Code;
         existingItem.Description = updatedItem.Description;
+        existingItem.Barcode = updatedItem.Barcode;
+        existingItem.Model_Number = updatedItem.Model_Number;
+        existingItem.Commodity_Code = updatedItem.Commodity_Code;
+        existingItem.Unit_Weight = updatedItem.Unit_Weight;
+        existingItem.Item_Line_Id = updatedItem.Item_Line_Id;
+        existingItem.Item_Group_Id = updatedItem.Item_Group_Id;
         existingItem.Item_Type_Id = updatedItem.Item_Type_Id;
+        existingItem.Min_Purchase_Qty = updatedItem.Min_Purchase_Qty;
+        existingItem.Case_Size = updatedItem.Case_Size;
+        existingItem.Packaging_Type = updatedItem.Packaging_Type;
+        existingItem.Order_Multiple = updatedItem.Order_Multiple;
+        existingItem.Supplier_Id = updatedItem.Supplier_Id;
+        existingItem.Supplier_Sku = updatedItem.Supplier_Sku;
+        existingItem.Updated_At = DateTime.UtcNow;
 
         _context.item.Update(existingItem);
         await _context.SaveChangesAsync();

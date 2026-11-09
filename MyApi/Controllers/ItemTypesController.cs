@@ -5,6 +5,17 @@ using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
 using MyApi.Models;
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 1. GET - ALLE ARTIKELTYPEN OPHALEN
+// 2. GET - ARTIKELTYPE OPHALEN OP ID
+// 3. GET - ALLE ITEMS VAN EEN ARTIKELTYPE OPHALEN -  api/v1/item_types/{id}/items
+// 4. POST - NIEUW ARTIKELTYPE AANMAKEN
+// 5. PUT - BESTAAND ARTIKELTYPE AANPASSEN
+// 6. DELETE - ARTIKELTYPE VERWIJDEREN
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 namespace MyApi.Controllers
 {
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -72,6 +83,37 @@ namespace MyApi.Controllers
 
             return Ok(items);
         }
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//GET ALL ITEMS BY ITEMTYPE ID
+
+[HttpGet]
+[Route("/api/v2/itemtypes/{id}/itemlines")]
+public async Task<IActionResult> GetItemLinesByItemTypeId(int id)
+{
+    // Controleer of het itemtype bestaat
+    var itemType = await _context.itemTypes.FindAsync(id);
+
+    if (itemType == null)
+    {
+        return NotFound();
+    }
+
+    // Zoek de items die bij dit itemtype horen
+    var itemLines = await _context.item
+        .Where(i => i.Item_Type_Id == id)
+        .Join(
+            _context.itemLines,
+            item => item.Item_Line_Id,
+            itemLine => itemLine.Id,
+            (item, itemLine) => itemLine
+        )
+        .Distinct()
+        .ToListAsync();
+
+    return Ok(itemLines);
+}
+
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //POST CREATE NEW ITEM POST
