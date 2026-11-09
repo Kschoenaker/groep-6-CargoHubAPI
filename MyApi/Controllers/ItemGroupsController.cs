@@ -7,6 +7,19 @@ using MyApi.Models;
 
 namespace MyApi.Controllers
 {
+
+
+// All endpoints for the Item entity
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+// 1. GET - ALLE ARTIKELGROEPEN OPHALEN
+// 2. GET - ARTIKELGROEP OPHALEN OP ID
+// 3. GET - ALLE ITEMS VAN EEN ARTIKELGROEP OPHALEN -  api/v1/item_groups/{id}/items
+// 4. POST - NIEUWE ARTIKELGROEP AANMAKEN
+// 5. PUT - BESTAANDE ARTIKELGROEP AANPASS
+// 6. DELETE - ARTIKELGROEP VERWIJDEREN
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
     public class ItemGroupsController : ControllerBase
     {
         //---------------------------------------------------------------------------------------------------------------------------------------------------------------------

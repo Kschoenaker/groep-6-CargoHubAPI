@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,24 @@ if (args.Length == 1 && args[0].Equals("--import-json-brondata", StringCompariso
     Console.WriteLine("Alle JSON-bronbestanden zijn geïmporteerd in de tabel json_brondata.");
     return;
 }
+
+if (args.Length == 1 && args[0].Equals("--seed-business-data", StringComparison.OrdinalIgnoreCase))
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException(
+            "De connection string 'DefaultConnection' ontbreekt.");
+
+    await BusinessDataSeeder.SeedAsync(connectionString, AppContext.BaseDirectory);
+    return;
+}
+
+// connection string ophalen uit appsettings.json
+var apiConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "De connection string 'DefaultConnection' ontbreekt.");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(apiConnectionString));
 
 builder.Services.AddControllers();
 
