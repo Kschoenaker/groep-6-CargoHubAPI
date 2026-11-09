@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using MyApi.Models;
 
@@ -14,7 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Item> item { get; set; }
     public DbSet<ItemType> itemTypes { get; set; }
     public DbSet<ItemGroup> itemGroups { get; set; }
-    public DbSet<ItemLine> itemLines  { get; set; }
+    public DbSet<ItemLine> itemLines { get; set; }
 
     public DbSet<Client> Clients { get; set; }
     public DbSet<Inventory> Inventories { get; set; }
@@ -98,17 +99,13 @@ public class AppDbContext : DbContext
             .Property(x => x.id).HasColumnName("id");
 
         modelBuilder.Entity<Inventory>()
-<<<<<<< Updated upstream
             .HasKey(x => new { x.item_id, x.location_id });
-=======
-             .HasKey(x => new { x.item_id, x.location_id });
 
         modelBuilder.Entity<Inventory>()
-             .Property(x => x.item_id).HasColumnName("item_id");
+            .Property(x => x.item_id).HasColumnName("item_id");
 
         modelBuilder.Entity<Inventory>()
-             .Property(x => x.location_id).HasColumnName("location_id");
->>>>>>> Stashed changes
+            .Property(x => x.location_id).HasColumnName("location_id");
 
         base.OnModelCreating(modelBuilder);
     }

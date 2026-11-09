@@ -24,6 +24,19 @@ public class OrderItemsController : ControllerBase
         return Ok(orderItems);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetOrderItem(int id)
+    {
+        var orderItem = await _context.OrderItems.FindAsync(id);
+
+        if (orderItem == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(orderItem);
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateOrderItem(OrderItem orderItem)
     {
