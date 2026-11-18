@@ -51,7 +51,7 @@ app.UseSwaggerUI();
 
 app.MapControllers();
 
-app.Urls.Add("http://localhost:3000");
+app.Urls.Add("http://0.0.0.0:3000");
 
 app.Run();
 
