@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "8080:3000"
     environment:
       ASPNETCORE_URLS: http://+:3000
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=cargohub;Username=postgres;Password=${POSTGRES_PASSWORD}"
